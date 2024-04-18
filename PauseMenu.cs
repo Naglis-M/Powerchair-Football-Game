@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.UI;
+using TMPro;
 using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
@@ -23,19 +26,21 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
-    public void Resume()
-    {
-        pauseMenuUI.SetActive(false);
-        Time.timeScale = 1f;
-        GameIsPaused = false;
-    }
+  public void Resume()
+{
+    pauseMenuUI.SetActive(false);
+    Time.timeScale = 1f;
+    AudioListener.pause = false; // Unpause all audio
+    GameIsPaused = false;
+}
 
-    void Pause()
-    {
-        pauseMenuUI.SetActive(true);
-        Time.timeScale = 0f;
-        GameIsPaused = true;
-    }
+void Pause()
+{
+    pauseMenuUI.SetActive(true);
+    Time.timeScale = 0f;
+    AudioListener.pause = true; // Pause all audio
+    GameIsPaused = true;
+}
 
     public void LoadMenu()
     {
