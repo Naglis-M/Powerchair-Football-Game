@@ -13,7 +13,11 @@ public class Timer : MonoBehaviour
     static float timer;
     public static bool TimeTrialIsFinished = false;
     public GameObject finishedTmpUI;
+    public GameObject levelSummaryUI;
     public float penaltyTime = 5.0f; // The time penalty for hitting a cone
+    public TMP_Text finalTimeText; // Text element for final time
+    public TMP_Text penaltiesCountText; // Text element for penalties count
+    private int penaltyCount = 0; // Counter for penalties
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +40,7 @@ public class Timer : MonoBehaviour
         timer += penalty;
         UpdateTimerDisplay();
         StartCoroutine(ShowPenaltyNotification(penalty));
+        penaltyCount++; // Increment the penalty count
     }
 
     private IEnumerator ShowPenaltyNotification(float penalty)
@@ -68,12 +73,26 @@ public class Timer : MonoBehaviour
 
     private void OnTriggerEnter(Collider collider)
     {
-        if(collider.gameObject.tag == "FinishLine" && !TimeTrialIsFinished)
+        if (collider.gameObject.tag == "FinishLine" && !TimeTrialIsFinished)
         {
-            finishedTmpUI.SetActive(true);
             TimeTrialIsFinished = true;
-            finishedText.text = "Finished in: " + timerText.text;
-            // You may want to stop the timer update when finished
+            finishedTmpUI.SetActive(false); // You might want to hide the finish UI
+            
+            timerText.enabled = false; // Optionally hide the timer
+
+            int totalPenaltySeconds = penaltyCount * (int)penaltyTime;
+            // Stop the timer from counting
+            timer = 0.0f;
+            Time.timeScale = 0f; // Optional: Stop all gameplay, like a pause
+            AudioListener.pause = true; // Optional: Stop all audio
+
+            // Display the summary information
+            finalTimeText.text = "Final Time: " + timerText.text;
+            penaltiesCountText.text = "Penalties: " + totalPenaltySeconds.ToString() + "s";
+
+            levelSummaryUI.SetActive(true); // Show the level summary UI
+            
+            // You can add more code here to update the summary UI with specific details
         }
     }
 }
