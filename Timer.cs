@@ -78,6 +78,7 @@ public class Timer : MonoBehaviour
             TimeTrialIsFinished = true;
             
             timerText.enabled = false; // Optionally hide the timer
+            penaltyText.gameObject.SetActive(false);
 
             int totalPenaltySeconds = penaltyCount * (int)penaltyTime;
             // Stop the timer from counting
