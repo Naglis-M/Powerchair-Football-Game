@@ -8,16 +8,15 @@ using TMPro;
 public class Timer : MonoBehaviour
 {
     public TMP_Text timerText;
-    public TMP_Text finishedText;
     public TMP_Text penaltyText;
     static float timer;
     public static bool TimeTrialIsFinished = false;
-    public GameObject finishedTmpUI;
     public GameObject levelSummaryUI;
     public float penaltyTime = 5.0f; // The time penalty for hitting a cone
     public TMP_Text finalTimeText; // Text element for final time
     public TMP_Text penaltiesCountText; // Text element for penalties count
     private int penaltyCount = 0; // Counter for penalties
+    public LevelCheckpoints levelCheckpoints;
 
     // Start is called before the first frame update
     void Start()
@@ -75,8 +74,8 @@ public class Timer : MonoBehaviour
     {
         if (collider.gameObject.tag == "FinishLine" && !TimeTrialIsFinished)
         {
+            Debug.Log("Attempting to show level summary");
             TimeTrialIsFinished = true;
-            finishedTmpUI.SetActive(false); // You might want to hide the finish UI
             
             timerText.enabled = false; // Optionally hide the timer
 
@@ -93,6 +92,8 @@ public class Timer : MonoBehaviour
             levelSummaryUI.SetActive(true); // Show the level summary UI
             
             // You can add more code here to update the summary UI with specific details
+
+
         }
     }
 }

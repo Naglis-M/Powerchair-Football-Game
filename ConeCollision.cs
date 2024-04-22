@@ -24,6 +24,7 @@ public class ConeCollision : MonoBehaviour
         {
             hasBeenHit = true; // Set the flag to true since the cone is now hit
             timerScript.AddTimePenalty(timePenalty);
+            Debug.Log("Cone Hit!");
             // Optionally, disable the cone or change its appearance to indicate it's been hit.
         }
     }
