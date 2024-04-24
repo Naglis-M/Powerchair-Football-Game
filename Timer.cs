@@ -21,16 +21,17 @@ public class Timer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        timer = 0.0f; // Reset timer to 0 at the start of the game
+        TimeTrialIsFinished = false; // Make sure the time trial is set to running
+        UpdateTimerDisplay(); // Update the display to show the reset timer
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!TimeTrialIsFinished)
-        {
-            timer += Time.deltaTime;
-            UpdateTimerDisplay();
+        if (!TimeTrialIsFinished) {
+            timer += Time.deltaTime; // This will only increment when TimeTrialIsFinished is false
+            UpdateTimerDisplay(); // Keep updating the display
         }
     }
 
