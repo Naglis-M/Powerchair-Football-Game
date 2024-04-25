@@ -31,6 +31,13 @@ public class LevelCheckpoints : MonoBehaviour
         finishLine.SetActive(false); // Disable finish line initially
     }
 
+    private void Start() {
+        // Initially show the first checkpoint if there is one
+        if (checkpointSingleList.Count > 0) {
+            checkpointSingleList[0].Show();
+        }
+    }
+
     public bool IsNextCheckpoint(CheckpointSingle checkpoint) {
         return checkpointSingleList.IndexOf(checkpoint) == nextCheckpointSingleIndex;
     }
@@ -43,6 +50,11 @@ public class LevelCheckpoints : MonoBehaviour
             nextCheckpointSingleIndex++;
             
             OnPlayerCorrectCheckpoint?.Invoke(this, EventArgs.Empty);
+
+            // Show the next checkpoint if it exists
+            if (nextCheckpointSingleIndex < checkpointSingleList.Count) {
+                checkpointSingleList[nextCheckpointSingleIndex].Show();
+            }
             
             if (AreAllCheckpointsCompleted()) {
                 finishLine.SetActive(true); // Activate the finish line
@@ -50,12 +62,12 @@ public class LevelCheckpoints : MonoBehaviour
             }
         } else {
             // Wrong checkpoint
-            OnPlayerWrongCheckpoint?.Invoke(this, EventArgs.Empty);
+            PlayerMissedCheckpoint(checkpointSingle);
         }
     }
 
     public void PlayerMissedCheckpoint(CheckpointSingle checkpointSingle) {
-        //Logic for when a player misses a checkpoint here
+        // Show the correct checkpoint to guide the player
         CheckpointSingle correctCheckpointSingle = checkpointSingleList[nextCheckpointSingleIndex];
         correctCheckpointSingle.Show();
         OnPlayerWrongCheckpoint?.Invoke(this, EventArgs.Empty);
