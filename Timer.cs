@@ -64,10 +64,12 @@ public class Timer : MonoBehaviour
     // You may want to create a new method to update the timer display if you don't have one already.
     void UpdateTimerDisplay()
     {
-        int mins = Mathf.FloorToInt(timer / 60);
-        int secs = Mathf.FloorToInt(timer % 60);
-        string time = string.Format("{0:0}:{1:00}", mins, secs);
-        timerText.text = time;
+        // Calculate the seconds and milliseconds from the timer
+        int seconds = Mathf.FloorToInt(timer);
+        int milliseconds = Mathf.FloorToInt((timer - seconds) * 1000);
+
+        // Update the timer text to show seconds and milliseconds
+        timerText.text = string.Format("{0:0}:{1:000}", seconds, milliseconds);
     }
 
 
