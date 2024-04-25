@@ -26,25 +26,26 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
-  public void Resume()
-{
-    pauseMenuUI.SetActive(false);
-    Time.timeScale = 1f;
-    AudioListener.pause = false; // Unpause all audio
-    GameIsPaused = false;
-}
+    public void Resume()
+    {
+        pauseMenuUI.SetActive(false);
+        Time.timeScale = 1f;
+        AudioListener.pause = false; // Unpause all audio
+        GameIsPaused = false;
+    }
 
-void Pause()
-{
-    pauseMenuUI.SetActive(true);
-    Time.timeScale = 0f;
-    AudioListener.pause = true; // Pause all audio
-    GameIsPaused = true;
-}
+    void Pause()
+    {
+        pauseMenuUI.SetActive(true);
+        Time.timeScale = 0f;
+        AudioListener.pause = true; // Pause all audio
+        GameIsPaused = true;
+    }
 
     public void LoadMenu()
     {
         Time.timeScale = 1f;
+        AudioListener.pause = false;
         SceneManager.LoadScene("Main Menu");
         Debug.Log("Loading...");
     }
