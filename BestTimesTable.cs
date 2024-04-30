@@ -32,7 +32,20 @@ public class BestTimesTable : MonoBehaviour
             new TimeEntry { time = 14.23f, name = "COL" },
             new TimeEntry { time = 10.01f, name = "YOI" },
         };
-
+        
+        //sort entry list by time
+        for (int i = 0; i < timeEntryList.Count; i++) {
+            for (int j = i + 1; j < timeEntryList.Count; j++) {
+                if (timeEntryList[j].time < timeEntryList[i].time) {
+                    //swap
+                    TimeEntry tmp = timeEntryList[i];
+                    timeEntryList[i] = timeEntryList[j];
+                    timeEntryList[j] = tmp;
+                }
+                
+            }
+            
+        }
         timeEntryTransformList = new List<Transform>();
 
         foreach (TimeEntry timeEntry in timeEntryList) {
