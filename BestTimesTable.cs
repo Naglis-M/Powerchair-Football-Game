@@ -11,7 +11,6 @@ public class BestTimesTable : MonoBehaviour
 {
     private Transform entryContainer;
     private Transform entryTemplate;
-    private List<TimeEntry> timeEntryList;
     private List<Transform> timeEntryTransformList;
 
     private void Awake() {
@@ -19,28 +18,21 @@ public class BestTimesTable : MonoBehaviour
         entryTemplate = entryContainer.Find("TimesEntryTemplate");
 
         entryTemplate.gameObject.SetActive(false);
-
-        timeEntryList = new List<TimeEntry>() {
-            new TimeEntry { time = 07.66f, name = "AAA" },
-            new TimeEntry { time = 09.54f, name = "MAX" },
-            new TimeEntry { time = 06.09f, name = "DAN" },
-            new TimeEntry { time = 11.34f, name = "BOO" },
-            new TimeEntry { time = 04.67f, name = "LAP" },
-            new TimeEntry { time = 08.21f, name = "NAG" },
-            new TimeEntry { time = 08.24f, name = "MAT" },
-            new TimeEntry { time = 07.89f, name = "LEE" },
-            new TimeEntry { time = 14.23f, name = "COL" },
-            new TimeEntry { time = 10.01f, name = "YOI" },
-        };
         
+        string jsonString = PlayerPrefs.GetString("bestTimesTable", "{}"); // Provide a default empty JSON if nothing is stored yet
+        BestTimes bestTimes = JsonUtility.FromJson<BestTimes>(jsonString);
+
+        // Manually adding data
+        //AddTimeEntry(02.99f, "WIN");
+
         //sort entry list by time
-        for (int i = 0; i < timeEntryList.Count; i++) {
-            for (int j = i + 1; j < timeEntryList.Count; j++) {
-                if (timeEntryList[j].time < timeEntryList[i].time) {
+        for (int i = 0; i < bestTimes.timeEntryList.Count; i++) {
+            for (int j = i + 1; j < bestTimes.timeEntryList.Count; j++) {
+                if (bestTimes.timeEntryList[j].time < bestTimes.timeEntryList[i].time) {
                     //swap
-                    TimeEntry tmp = timeEntryList[i];
-                    timeEntryList[i] = timeEntryList[j];
-                    timeEntryList[j] = tmp;
+                    TimeEntry tmp = bestTimes.timeEntryList[i];
+                    bestTimes.timeEntryList[i] = bestTimes.timeEntryList[j];
+                    bestTimes.timeEntryList[j] = tmp;
                 }
                 
             }
@@ -48,10 +40,9 @@ public class BestTimesTable : MonoBehaviour
         }
         timeEntryTransformList = new List<Transform>();
 
-        foreach (TimeEntry timeEntry in timeEntryList) {
+        foreach (TimeEntry timeEntry in bestTimes.timeEntryList) {
             CreateTimeEntryTransform(timeEntry, entryContainer, timeEntryTransformList);
         }
-
     }
 
     private void CreateTimeEntryTransform(TimeEntry timeEntry, Transform container, List<Transform> transformList) {
@@ -81,11 +72,69 @@ public class BestTimesTable : MonoBehaviour
         string name = timeEntry.name;
         entryTransform.Find("nameText").GetComponent<TMP_Text>().text = name;
 
-        transformList.Add(entryTransform);
+        // Set background visible odds and evens, easier to see
+        entryTransform.Find("bg").gameObject.SetActive(rank % 2 == 1);
+
+        if (rank == 1) {
+            // Highlight First Place
+            entryTransform.Find("nameText").GetComponent<TMP_Text>().color = Color.green;
+            entryTransform.Find("posText").GetComponent<TMP_Text>().color = Color.green;
+            entryTransform.Find("timeText").GetComponent<TMP_Text>().color = Color.green;
+        }
+        
+        // Set Trophy
+        string colorHex;
+        Color colorValue;
+
+        switch (rank) {
+            default:
+                entryTransform.Find("trophy").gameObject.SetActive(false);
+                break;
+            case 1:
+                colorHex = "#FFD200"; // Gold color
+                if (ColorUtility.TryParseHtmlString(colorHex, out colorValue)) {
+                    entryTransform.Find("trophy").GetComponent<Image>().color = colorValue;
+                }
+                break;
+            case 2:
+                colorHex = "#D4D4D4"; // Silver color
+                if (ColorUtility.TryParseHtmlString(colorHex, out colorValue)) {
+                    entryTransform.Find("trophy").GetComponent<Image>().color = colorValue;
+                }
+                break;
+            case 3:
+                colorHex = "#9F7236"; // Bronze color
+                if (ColorUtility.TryParseHtmlString(colorHex, out colorValue)) {
+                    entryTransform.Find("trophy").GetComponent<Image>().color = colorValue;
+                }
+                break;
+        }
+                transformList.Add(entryTransform);
+    }
+
+    private void AddTimeEntry(float time, string name) {
+        // Create TimeEntry
+        TimeEntry timeEntry = new TimeEntry { time = time, name = name };
+
+        // Load saved bestTimes
+        string jsonString = PlayerPrefs.GetString("bestTimesTable", "{}"); // Provide a default empty JSON if nothing is stored yet
+        BestTimes bestTimes = JsonUtility.FromJson<BestTimes>(jsonString);
+
+        // Add new entry to bestTimes
+        bestTimes.timeEntryList.Add(timeEntry);
+
+        // Save updated bestTimes
+        string json = JsonUtility.ToJson(bestTimes);
+        PlayerPrefs.SetString("bestTimesTable", json);
+        PlayerPrefs.Save();
+    }
+
+    private class BestTimes {
+        public List<TimeEntry> timeEntryList;
     }
 
     //Represents a single time entry
-
+    [System.Serializable]
     private class TimeEntry {
         public float time;
         public string name;
