@@ -95,7 +95,6 @@ public class Timer : MonoBehaviour
 
             levelSummaryUI.SetActive(true); // Show the level summary UI
             
-            // You can add more code here to update the summary UI with specific details
 
 
         }
