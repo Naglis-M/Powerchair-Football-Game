@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using Random=UnityEngine.Random;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -22,9 +23,6 @@ public class BestTimesTable : MonoBehaviour
         string jsonString = PlayerPrefs.GetString("bestTimesTable", "{}"); // Provide a default empty JSON if nothing is stored yet
         BestTimes bestTimes = JsonUtility.FromJson<BestTimes>(jsonString);
 
-        // Manually adding data
-        //AddTimeEntry(02.99f, "WIN");
-
         //sort entry list by time
         for (int i = 0; i < bestTimes.timeEntryList.Count; i++) {
             for (int j = i + 1; j < bestTimes.timeEntryList.Count; j++) {
@@ -38,6 +36,12 @@ public class BestTimesTable : MonoBehaviour
             }
             
         }
+        
+        // Limit the list to the top 10 entries
+        if (bestTimes.timeEntryList.Count > 10) {
+            bestTimes.timeEntryList = bestTimes.timeEntryList.Take(10).ToList();
+        }
+
         timeEntryTransformList = new List<Transform>();
 
         foreach (TimeEntry timeEntry in bestTimes.timeEntryList) {
@@ -67,7 +71,7 @@ public class BestTimesTable : MonoBehaviour
         entryTransform.Find("posText").GetComponent<TMP_Text>().text = rankString;
 
         float time = timeEntry.time; 
-        entryTransform.Find("timeText").GetComponent<TMP_Text>().text = time.ToString(); 
+        entryTransform.Find("timeText").GetComponent<TMP_Text>().text = timeEntry.time.ToString("F3"); 
 
         string name = timeEntry.name;
         entryTransform.Find("nameText").GetComponent<TMP_Text>().text = name;
