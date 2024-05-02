@@ -8,45 +8,39 @@ using TMPro;
 
 public class ChairController : MonoBehaviour
 {
-    public float speed = 10.0f;
-    public float rotationSpeed = 100.0f; // Adjusted for more granular control
+    public float acceleration = 5.0f;
+    public float rotationTorque = 100.0f; // Torque for rotating the chair
     public float pushForceMultiplier = 2.0f;
-    public Vector3 startPosition; // Default start position
-    public Quaternion startRotation; // Default start rotation
+    public Vector3 startPosition;
+    public Quaternion startRotation;
 
     private Rigidbody chairRigidbody;
 
     void Start()
     {
         chairRigidbody = GetComponent<Rigidbody>();
-        // Initialize with default start position and rotation if not set
-        if (startPosition == Vector3.zero)
-            startPosition = transform.position;
-        if (startRotation == Quaternion.identity)
-            startRotation = transform.rotation;
+        ResetToStartPosition();
     }
 
     void Update() 
     {
-        // Check if the "R" key or a specific controller button is pressed
         if (Input.GetKeyDown(KeyCode.R) || Input.GetButtonDown("ResetPosition"))
         {
-            ResetPosition();
+            ResetToStartPosition();
         }
     }
 
-    void FixedUpdate() // Use FixedUpdate for physics calculations
+    void FixedUpdate()
     {
         float moveVertical = -Input.GetAxis("Vertical");
         float moveHorizontal = Input.GetAxis("Horizontal");
 
-        // Apply rotation
-        Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, moveHorizontal * rotationSpeed * Time.fixedDeltaTime, 0));
-        chairRigidbody.MoveRotation(chairRigidbody.rotation * deltaRotation);
+        // Apply immediate impulse force for movement
+        Vector3 forceDirection = transform.right * moveVertical;
+        chairRigidbody.AddForce(forceDirection * acceleration, ForceMode.Impulse);
 
-        // Apply movement
-        Vector3 moveDirection = transform.right * moveVertical * speed;
-        chairRigidbody.velocity = moveDirection;
+        // Continue applying torque for rotation
+        chairRigidbody.AddTorque(0, moveHorizontal * rotationTorque * Time.fixedDeltaTime, 0, ForceMode.VelocityChange);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -62,11 +56,10 @@ public class ChairController : MonoBehaviour
         }
     }
 
-    // Method to reset the chair's position
-    public void ResetPosition()
+    public void ResetToStartPosition()
     {
-        chairRigidbody.velocity = Vector3.zero; // Stop all movement
-        chairRigidbody.angularVelocity = Vector3.zero; // Stop all rotation
+        chairRigidbody.velocity = Vector3.zero;
+        chairRigidbody.angularVelocity = Vector3.zero;
         transform.position = startPosition;
         transform.rotation = startRotation;
     }
