@@ -12,11 +12,16 @@ public class Timer : MonoBehaviour
     static float timer;
     public static bool TimeTrialIsFinished = false;
     public GameObject levelSummaryUI;
+    public GameObject LeaderboardEntryUI;
     public float penaltyTime = 5.0f; // The time penalty for hitting a cone
     public TMP_Text finalTimeText; // Text element for final time
     public TMP_Text penaltiesCountText; // Text element for penalties count
     private int penaltyCount = 0; // Counter for penalties
     public LevelCheckpoints levelCheckpoints;
+    public string levelKey; // Set this in the Unity Inspector for each level
+    public TMP_InputField playerNameInput;
+
+    private float completedTime;
 
     // Start is called before the first frame update
     void Start()
@@ -73,30 +78,48 @@ public class Timer : MonoBehaviour
     }
 
 
-    private void OnTriggerEnter(Collider collider)
+    public void OnTriggerEnter(Collider collider)
     {
         if (collider.gameObject.tag == "FinishLine" && !TimeTrialIsFinished)
         {
-            Debug.Log("Attempting to show level summary");
+            Debug.Log("Level Completed, preparing submission.");
             TimeTrialIsFinished = true;
-            
+
+            // Capture the timer before resetting
+            completedTime = timer;
+
             timerText.enabled = false; // Optionally hide the timer
             penaltyText.gameObject.SetActive(false);
 
-            int totalPenaltySeconds = penaltyCount * (int)penaltyTime;
-            // Stop the timer from counting
             timer = 0.0f;
-            Time.timeScale = 0f; // Optional: Stop all gameplay, like a pause
-            AudioListener.pause = true; // Optional: Stop all audio
+            Time.timeScale = 0f; // Stop all gameplay, like a pause
+            AudioListener.pause = true; // Stop all audio
 
-            // Display the summary information
-            finalTimeText.text = "Final Time: " + timerText.text;
-            penaltiesCountText.text = "Penalties: " + totalPenaltySeconds.ToString() + "s";
-
-            levelSummaryUI.SetActive(true); // Show the level summary UI
-            
-
+            // Show the leaderboard entry UI
+            LeaderboardEntryUI.SetActive(true);
 
         }
     }
+
+
+    public void SubmitScore(string levelKey, float completedTime, string playerName)
+    {
+        FindObjectOfType<BestTimesTable>().AddTimeEntry(completedTime, playerName, levelKey);
+    }
+
+    
+    public void HandleSubmission()
+    {
+        // Assume playerNameInput is a TMP_InputField where the player enters their name
+        string playerName = playerNameInput.text;
+        SubmitScore(levelKey, completedTime, playerName);
+
+        // After submission, update and show the level summary UI
+        finalTimeText.text = "Final Time: " + completedTime.ToString("F3") + "s";
+        penaltiesCountText.text = "Penalties: " + penaltyCount * (int)penaltyTime + "s";
+        levelSummaryUI.SetActive(true); // Show the level summary UI
+        LeaderboardEntryUI.SetActive(false); // Hide the leaderboard entry UI
+    }
+
+
 }

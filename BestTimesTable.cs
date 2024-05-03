@@ -6,6 +6,7 @@ using System.Linq;
 using Random=UnityEngine.Random;
 using UnityEngine.Audio;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class BestTimesTable : MonoBehaviour
@@ -14,41 +15,37 @@ public class BestTimesTable : MonoBehaviour
     private Transform entryTemplate;
     private List<Transform> timeEntryTransformList;
 
+    public string levelKey; // Set this dynamically
+
     private void Awake() {
         entryContainer = transform.Find("TimesEntryContainer");
         entryTemplate = entryContainer.Find("TimesEntryTemplate");
-
+        
         entryTemplate.gameObject.SetActive(false);
-        
-        string jsonString = PlayerPrefs.GetString("bestTimesTable", "{}"); // Provide a default empty JSON if nothing is stored yet
-        BestTimes bestTimes = JsonUtility.FromJson<BestTimes>(jsonString);
+        timeEntryTransformList = new List<Transform>(); // Ensure this list is initialized
 
-        //sort entry list by time
-        for (int i = 0; i < bestTimes.timeEntryList.Count; i++) {
-            for (int j = i + 1; j < bestTimes.timeEntryList.Count; j++) {
-                if (bestTimes.timeEntryList[j].time < bestTimes.timeEntryList[i].time) {
-                    //swap
-                    TimeEntry tmp = bestTimes.timeEntryList[i];
-                    bestTimes.timeEntryList[i] = bestTimes.timeEntryList[j];
-                    bestTimes.timeEntryList[j] = tmp;
-                }
-                
-            }
-            
-        }
-        
-        // Limit the list to the top 10 entries
-        if (bestTimes.timeEntryList.Count > 10) {
-            bestTimes.timeEntryList = bestTimes.timeEntryList.Take(10).ToList();
-        }
-
-        timeEntryTransformList = new List<Transform>();
-
-        foreach (TimeEntry timeEntry in bestTimes.timeEntryList) {
-            CreateTimeEntryTransform(timeEntry, entryContainer, timeEntryTransformList);
-        }
+        LoadLeaderboard();
     }
 
+    public void LoadLeaderboard() {
+        string jsonString = PlayerPrefs.GetString(levelKey, "{}"); // Load specific level's leaderboard
+        BestTimes bestTimes = JsonUtility.FromJson<BestTimes>(jsonString);
+
+        bestTimes.timeEntryList = bestTimes.timeEntryList.OrderBy(entry => entry.time).ToList();
+
+        // Clear previous entries
+        foreach (Transform child in timeEntryTransformList) {
+            Destroy(child.gameObject);
+        }
+        timeEntryTransformList.Clear();
+
+        // Populate leaderboard UI
+        for (int i = 0; i < bestTimes.timeEntryList.Count && i < 10; i++) {
+            CreateTimeEntryTransform(bestTimes.timeEntryList[i], entryContainer, timeEntryTransformList);
+        }
+        
+    }
+    
     private void CreateTimeEntryTransform(TimeEntry timeEntry, Transform container, List<Transform> transformList) {
         
         float templateHeight = 80f;
@@ -116,30 +113,38 @@ public class BestTimesTable : MonoBehaviour
                 transformList.Add(entryTransform);
     }
 
-    private void AddTimeEntry(float time, string name) {
-        // Create TimeEntry
-        TimeEntry timeEntry = new TimeEntry { time = time, name = name };
 
-        // Load saved bestTimes
-        string jsonString = PlayerPrefs.GetString("bestTimesTable", "{}"); // Provide a default empty JSON if nothing is stored yet
+    //Delete times button manually
+    public void ClearAllTimes() {
+        // Delete the leaderboard key from PlayerPrefs if it exists
+        if (PlayerPrefs.HasKey(levelKey)) {
+            PlayerPrefs.DeleteKey(levelKey);
+            PlayerPrefs.Save();  // Make sure to save the changes to PlayerPrefs
+        }
+
+        // Update the UI to show that the leaderboard is now empty
+        LoadLeaderboard();
+    }
+
+
+    public void AddTimeEntry(float time, string name, string key) {
+        // Fetch, update, and save the leaderboard for the given level key
+        TimeEntry newEntry = new TimeEntry { time = time, name = name };
+        string jsonString = PlayerPrefs.GetString(key, "{}");
         BestTimes bestTimes = JsonUtility.FromJson<BestTimes>(jsonString);
-
-        // Add new entry to bestTimes
-        bestTimes.timeEntryList.Add(timeEntry);
-
-        // Save updated bestTimes
+        bestTimes.timeEntryList.Add(newEntry);
         string json = JsonUtility.ToJson(bestTimes);
-        PlayerPrefs.SetString("bestTimesTable", json);
+        PlayerPrefs.SetString(key, json);
         PlayerPrefs.Save();
     }
 
-    private class BestTimes {
-        public List<TimeEntry> timeEntryList;
+    [System.Serializable]
+    public class BestTimes {
+        public List<TimeEntry> timeEntryList = new List<TimeEntry>();
     }
 
-    //Represents a single time entry
     [System.Serializable]
-    private class TimeEntry {
+    public class TimeEntry {
         public float time;
         public string name;
     }

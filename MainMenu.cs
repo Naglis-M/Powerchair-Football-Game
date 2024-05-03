@@ -52,6 +52,15 @@ public class MainMenu : MonoBehaviour
         AudioListener.pause = false;
         SceneManager.LoadScene("TT Level 5");
     }
+
+    public void BestTimesLeaderboard() 
+    {
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+        SceneManager.LoadScene("LeaderboardsTimeTrials");
+    }
+
+
     public void RestartLevel() 
     {
         Time.timeScale = 1f;
