@@ -17,6 +17,10 @@ public class MainMenu : MonoBehaviour
     {
         SceneManager.LoadScene("TT Menu");
     }
+    public void ShootingLevelSelect() 
+    {
+        SceneManager.LoadScene("Shooting Menu");
+    }
 
     public void LoadLevel1() 
     {
@@ -51,6 +55,26 @@ public class MainMenu : MonoBehaviour
         Time.timeScale = 1f;
         AudioListener.pause = false;
         SceneManager.LoadScene("TT Level 5");
+    }
+    public void LoadShootingLevel1() 
+    {
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+        SceneManager.LoadScene("Shooting Level 1");
+    }
+
+    public void LoadShootingLevel2() 
+    {
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+        SceneManager.LoadScene("Shooting Level 2");
+    }
+
+    public void LoadShootingLevel3() 
+    {
+        Time.timeScale = 1f;
+        AudioListener.pause = false;
+        SceneManager.LoadScene("Shooting Level 3");
     }
 
     public void BestTimesLeaderboard() 
