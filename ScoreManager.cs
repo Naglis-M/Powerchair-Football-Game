@@ -8,22 +8,49 @@ using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
-    public TMP_Text scoreText; // Assign this in the inspector
-    private int score = 0;
+    public int totalScore = 0;
+    public int totalBalls;
+    public GameObject summaryUI;
+    public TMP_Text scoreText;
+    public TMP_Text finalScoreText;
 
-    void Start()
+    public void StartLevel(int ballCount)
     {
-        UpdatePointseDisplay();
+        totalBalls = ballCount; // Set this from the inspector for each level
+        totalScore = 0;
+        UpdatePointsDisplay();
+        
     }
 
-    public void AddPoints(int amount)
+    public void AddPoints(int points)
     {
-        score += amount;
-        UpdatePointseDisplay();
+        totalScore += points;
+        totalBalls--; // Decrement the count of balls as they score
+        CheckCompletion();
+        UpdatePointsDisplay();
+    }
+    
+    private void UpdatePointsDisplay()
+    {
+        scoreText.text = "Score: " + totalScore.ToString();
     }
 
-    private void UpdatePointseDisplay()
+    public void BallOut()
     {
-        scoreText.text = "Score: " + score.ToString();
+        totalBalls--; // Decrement the count when a ball is destroyed or goes out
+        CheckCompletion();
     }
+
+    private void CheckCompletion()
+    {
+        if (totalBalls <= 0) // Check if all balls are processed
+        {
+            Time.timeScale = 0f;
+            scoreText.enabled = false;
+            AudioListener.pause = true;
+            summaryUI.SetActive(true);
+            finalScoreText.text = "Total Score: " + totalScore.ToString();
+        }
+    }
+
 }
