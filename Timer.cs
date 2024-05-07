@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,13 +25,17 @@ public class Timer : MonoBehaviour
     private float completedTime;
 
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
-        timer = 0.0f; // Reset timer to 0 at the start of the game
+        ResetTimer();
         TimeTrialIsFinished = false; // Make sure the time trial is set to running
         UpdateTimerDisplay(); // Update the display to show the reset timer
     }
 
+    public void ResetTimer()
+    {
+        timer = 0.0f; // Reset timer to 0 at the start of the game
+    }
     // Update is called once per frame
     void Update()
     {
@@ -87,7 +92,8 @@ public class Timer : MonoBehaviour
 
             // Capture the timer before resetting
             completedTime = timer;
-
+            GetCurrentTime();
+            
             timerText.enabled = false; // Optionally hide the timer
             penaltyText.gameObject.SetActive(false);
 
@@ -121,5 +127,9 @@ public class Timer : MonoBehaviour
         LeaderboardEntryUI.SetActive(false); // Hide the leaderboard entry UI
     }
 
+    public float GetCurrentTime()
+    {
+        return timer;
+    }
 
 }
