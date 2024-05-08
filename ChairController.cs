@@ -43,7 +43,7 @@ public class ChairController : MonoBehaviour
         chairRigidbody.AddTorque(0, moveHorizontal * rotationTorque * Time.fixedDeltaTime, 0, ForceMode.VelocityChange);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ball"))
         {

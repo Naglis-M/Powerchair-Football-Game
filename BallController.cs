@@ -11,14 +11,14 @@ public class BallController : MonoBehaviour
     private Rigidbody ballRigidbody;
     public float forceMagnitude = 1.0f; // Adjust this value as needed
     public ScoreManager scoreManager;
-    private bool canCollide = true; // A flag to check if the ball can collide with a boundary
+    public bool canCollide = true; // A flag to check if the ball can collide with a boundary
 
     void Start()
     {
         ballRigidbody = GetComponent<Rigidbody>();
     }
 
-    private void OnCollisionEnter(Collision collision)
+    public void OnCollisionEnter(Collision collision)
     {
         // Check for boundary collision
         if (collision.gameObject.CompareTag("Boundary") && canCollide)
@@ -39,7 +39,7 @@ public class BallController : MonoBehaviour
         }
     }
 
-    private IEnumerator CoolDown()
+    public IEnumerator CoolDown()
     {
         canCollide = false; // Disable collision
         yield return new WaitForSeconds(0.5f); // Wait for 0.5 seconds
