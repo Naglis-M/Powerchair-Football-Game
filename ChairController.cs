@@ -30,7 +30,7 @@ public class ChairController : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    public void FixedUpdate()
     {
         float moveVertical = -Input.GetAxis("Vertical");
         float moveHorizontal = Input.GetAxis("Horizontal");
