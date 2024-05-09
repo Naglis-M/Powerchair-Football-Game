@@ -35,6 +35,11 @@ public class ChairController : MonoBehaviour
         float moveVertical = -Input.GetAxis("Vertical");
         float moveHorizontal = Input.GetAxis("Horizontal");
 
+        FixedUpdateWithInput( moveVertical, moveHorizontal);
+    }
+
+    public void FixedUpdateWithInput(float moveVertical, float moveHorizontal)
+    {
         // Apply immediate impulse force for movement
         Vector3 forceDirection = transform.right * moveVertical;
         chairRigidbody.AddForce(forceDirection * acceleration, ForceMode.Impulse);
