@@ -30,7 +30,7 @@ public class ScoreManager : MonoBehaviour
         UpdatePointsDisplay();
     }
     
-    private void UpdatePointsDisplay()
+    public void UpdatePointsDisplay()
     {
         scoreText.text = "Score: " + totalScore.ToString();
     }
@@ -41,7 +41,7 @@ public class ScoreManager : MonoBehaviour
         CheckCompletion();
     }
 
-    private void CheckCompletion()
+    public void CheckCompletion()
     {
         if (totalBalls <= 0) // Check if all balls are processed
         {

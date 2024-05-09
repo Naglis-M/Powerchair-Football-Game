@@ -5,7 +5,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
-public class ChairMovementTests
+public class ChairMovementTest
 {
     private GameObject chairObject;
     private ChairController chairController;
@@ -16,7 +16,7 @@ public class ChairMovementTests
         chairObject = new GameObject("Chair");
         chairController = chairObject.AddComponent<ChairController>();
         chairRigidbody = chairObject.AddComponent<Rigidbody>();
-        chairRigidbody.useGravity = false; // Assuming the chair doesn't need gravity for the test
+        chairRigidbody.useGravity = true;
         chairController.acceleration = 5.0f; // Set acceleration value
     }
 

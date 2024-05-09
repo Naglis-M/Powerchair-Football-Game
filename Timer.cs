@@ -37,7 +37,7 @@ public class Timer : MonoBehaviour
         timer = 0.0f; // Reset timer to 0 at the start of the game
     }
     // Update is called once per frame
-    void Update()
+    public void Update()
     {
         if (!TimeTrialIsFinished) {
             timer += Time.deltaTime; // This will only increment when TimeTrialIsFinished is false
@@ -53,7 +53,7 @@ public class Timer : MonoBehaviour
         penaltyCount++; // Increment the penalty count
     }
 
-    private IEnumerator ShowPenaltyNotification(float penalty)
+    public IEnumerator ShowPenaltyNotification(float penalty)
     {
         if (penaltyText != null)
         {
@@ -72,7 +72,7 @@ public class Timer : MonoBehaviour
 
 
     // You may want to create a new method to update the timer display if you don't have one already.
-    void UpdateTimerDisplay()
+    public void UpdateTimerDisplay()
     {
         // Calculate the seconds and milliseconds from the timer
         int seconds = Mathf.FloorToInt(timer);
