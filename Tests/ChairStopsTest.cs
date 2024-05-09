@@ -34,12 +34,12 @@ public class ChairStopTest
         yield return new WaitForSeconds(1);
 
         // Stop any input (simulate key up)
-        chairRigidbody.velocity = Vector3.zero;
+        chairRigidbody.velocity = new Vector3(0, chairRigidbody.velocity.y, 0); // Preserve the Y-axis velocity due to gravity
 
         // Allow time for physics to settle
         yield return new WaitForSeconds(1);
 
-        // Check if the chair has stopped moving
-        Assert.AreEqual(Vector3.zero, chairRigidbody.velocity, "Chair should come to a complete stop.");
+        // Check if the chair has stopped moving on the X and Z axes
+        Assert.AreEqual(Vector3.zero, new Vector3(chairRigidbody.velocity.x, 0, chairRigidbody.velocity.z), "Chair should come to a complete stop.");
     }
 }
